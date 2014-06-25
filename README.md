@@ -1,4 +1,4 @@
-This is a Dockerfile setup for mariadb - https://mariadb.org/
+This is a Dockerfile setup for mariadb v5.5 - https://mariadb.org/
 
 To run:
 
