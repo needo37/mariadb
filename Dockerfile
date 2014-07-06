@@ -18,7 +18,7 @@ RUN apt-get install -qy mariadb-server
 
 # Tweak my.cnf
 RUN sed -i -e 's/\(bind-address.*=\).*/\1 0.0.0.0/g' /etc/mysql/my.cnf
-RUN sed -i -e 's/\(log_error.*\)/#\1/g' /etc/mysql/my.cnf
+RUN sed -i -e 's/\(log_error.*=\).*/\1 /db/mysql_safe.log/g' /etc/mysql/my.cnf
 RUN sed -i -e 's/\(user.*=\).*/\1 nobody/g' /etc/mysql/my.cnf
 
 EXPOSE 3306
