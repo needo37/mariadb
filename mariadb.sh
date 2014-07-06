@@ -22,5 +22,5 @@ else
 fi
 
 echo "Starting MariaDB..."
-/usr/bin/mysqld_safe --datadir='/db'
+/usr/bin/mysqld_safe --skip-syslog --datadir='/db'
 
