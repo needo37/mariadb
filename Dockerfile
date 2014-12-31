@@ -14,7 +14,8 @@ CMD ["/sbin/my_init"]
 RUN apt-get update -q
 
 # Install Dependencies
-RUN apt-get install -qy mariadb-server mysqltuner
+RUN apt-get install -qy mariadb-server 
+RUN apt-get install -qy mysqltuner
 
 # Tweak my.cnf
 RUN sed -i -e 's#\(bind-address.*=\).*#\1 0.0.0.0#g' /etc/mysql/my.cnf
