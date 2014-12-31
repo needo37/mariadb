@@ -1,4 +1,5 @@
 #!/bin/bash
+ln /etc/mysql/my.cnf /db
 start_mysql(){
     /usr/bin/mysqld_safe --datadir=/db > /dev/null 2>&1 &
     RET=1
