@@ -32,6 +32,10 @@ apt-get update -q && \
 apt-get install -qy mariadb-server && \
 apt-get install -qy mysqltuner && \
 
+sed -i -e 's#\(bind-address.*=\).*#\1 0.0.0.0#g' /etc/mysql/my.cnf && \
+sed -i -e 's#\(log_error.*=\).*#\1 /db/mysql_safe.log#g' /etc/mysql/my.cnf && \
+sed -i -e 's/\(user.*=\).*/\1 nobody/g' /etc/mysql/my.cnf && \
+
 
 # InnoDB engine to use 1 file per table, vs everything in ibdata.
 echo '[mysqld]' > /etc/mysql/conf.d/innodb_file_per_table.cnf && \
