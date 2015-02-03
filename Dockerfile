@@ -1,36 +1,40 @@
-FROM phusion/baseimage:0.9.15
-MAINTAINER needo <needo@superhero.org>
+FROM phusion/baseimage:0.9.16
 ENV DEBIAN_FRONTEND noninteractive
 
 # Set correct environment variables
 ENV HOME /root
-
-RUN usermod -u 99 nobody && \
-    usermod -g 100 nobody
-
+ENV TERM xterm
 # Use baseimage-docker's init system
 CMD ["/sbin/my_init"]
 
-RUN apt-get update -q
+# Add mariadb.sh and my.cnf to /root
+ADD mariadb.sh /root/mariadb.sh
+ADD my.cnf /root/my.cnf
+
+# Configure user nobody to match unRAID's settings
+RUN \
+usermod -u 99 nobody && \
+usermod -g 100 nobody && \
+usermod -d /home nobody && \
+chown -R nobody:users /home && \
+
+# mv startup file and make executable
+mkdir -p /etc/service/mariadb && \
+mv /root/mariadb.sh /etc/service/mariadb/run && \
+chmod +x /etc/service/mariadb/run && \
+
+    
+# update apt
+apt-get update -q && \
 
 # Install Dependencies
-RUN apt-get install -qy mariadb-server 
-RUN apt-get install -qy mysqltuner
+apt-get install -qy mariadb-server && \
+apt-get install -qy mysqltuner && \
 
-# Tweak my.cnf
-RUN sed -i -e 's#\(bind-address.*=\).*#\1 0.0.0.0#g' /etc/mysql/my.cnf
-RUN sed -i -e 's#\(log_error.*=\).*#\1 /db/mysql_safe.log#g' /etc/mysql/my.cnf
-RUN sed -i -e 's/\(user.*=\).*/\1 nobody/g' /etc/mysql/my.cnf
 
 # InnoDB engine to use 1 file per table, vs everything in ibdata.
-RUN echo '[mysqld]' > /etc/mysql/conf.d/innodb_file_per_table.cnf
-RUN echo 'innodb_file_per_table' >> /etc/mysql/conf.d/innodb_file_per_table.cnf
+echo '[mysqld]' > /etc/mysql/conf.d/innodb_file_per_table.cnf && \
+echo 'innodb_file_per_table' >> /etc/mysql/conf.d/innodb_file_per_table.cnf
+
 
 EXPOSE 3306
-
-VOLUME /db
-
-# Add mariadb to runit
-RUN mkdir /etc/service/mariadb
-ADD mariadb.sh /etc/service/mariadb/run
-RUN chmod +x /etc/service/mariadb/run

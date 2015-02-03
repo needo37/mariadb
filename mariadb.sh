@@ -1,5 +1,13 @@
 #!/bin/bash
-ln /etc/mysql/my.cnf /db
+if [ -f "/db/my.cnf" ]; then
+echo "applying latest my.cnf"
+/bin/cp -f /db/my.cnf /etc/mysql/my.cnf
+else
+echo "copying initial my.cnf from root dir"
+/bin/cp -f /root/my.cnf /db/my.cnf
+/bin/cp -f /db/my.cnf /etc/mysql/my.cnf
+fi
+
 start_mysql(){
     /usr/bin/mysqld_safe --datadir=/db > /dev/null 2>&1 &
     RET=1
