@@ -1,5 +1,4 @@
 #!/bin/bash
-mkdir -p /db
 if [ -f "/db/my.cnf" ]; then
 echo "applying latest my.cnf"
 /bin/cp -f /db/my.cnf /etc/mysql/my.cnf
