@@ -7,9 +7,10 @@ ENV TERM xterm
 # Use baseimage-docker's init system
 CMD ["/sbin/my_init"]
 
-# Add mariadb.sh and my.cnf to /root
+# Add mariadb.sh, firstrun.sh and my.cnf
 ADD mariadb.sh /root/mariadb.sh
 ADD my.cnf /root/my.cnf
+ADD firstrun.sh /etc/my_init.d/firstrun.sh
 
 # Configure user nobody to match unRAID's settings
 RUN \
@@ -22,7 +23,7 @@ chown -R nobody:users /home && \
 mkdir -p /etc/service/mariadb && \
 mv /root/mariadb.sh /etc/service/mariadb/run && \
 chmod +x /etc/service/mariadb/run && \
-
+chmod +x /etc/my_init.d/firstrun.sh && \
     
 # update apt
 apt-get update -q && \
