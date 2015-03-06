@@ -34,7 +34,7 @@ apt-get install -qy mysqltuner && \
 
 # Tweak my.cnf
 sed -i -e 's#\(bind-address.*=\).*#\1 0.0.0.0#g' /etc/mysql/my.cnf && \
-sed -i -e 's#\(log_error.*=\).*#\1 /db/databases/mysql_safe.log#g' /etc/mysql/my.cnf && \
+sed -i -e 's#\(log_error.*=\).*#\1 /db/mysql_safe.log#g' /etc/mysql/my.cnf && \
 sed -i -e 's/\(user.*=\).*/\1 nobody/g' /etc/mysql/my.cnf && \
 echo '[mysqld]' > /etc/mysql/conf.d/innodb_file_per_table.cnf && \
 echo 'innodb_file_per_table' >> /etc/mysql/conf.d/innodb_file_per_table.cnf && \
