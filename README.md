@@ -3,7 +3,7 @@ This is a Dockerfile setup for mariadb v5.5 - https://mariadb.org/
 To run:
 
 ```
-docker run -d --name="mariadb" -v /path/to/db:/db -v /etc/localtime:/etc/localtime:ro -p 3306:3306 needo/mariadb
+docker run -d --name="mariadb" -v /path/to/db:/db -v /etc/localtime:/etc/localtime:ro -p 3306:3306 -p 3380:3380 needo/mariadb
 ```
 
 FIRST TIME USERS

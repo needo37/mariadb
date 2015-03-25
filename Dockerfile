@@ -1,35 +1,22 @@
-FROM phusion/baseimage:0.9.11
+FROM phusion/baseimage:0.9.15
 MAINTAINER needo <needo@superhero.org>
-ENV DEBIAN_FRONTEND noninteractive
 
+#########################################
+##        ENVIRONMENTAL CONFIG         ##
+#########################################
 # Set correct environment variables
-ENV HOME /root
-
-RUN usermod -u 99 nobody && \
-    usermod -g 100 nobody
-
+ENV HOME="/root" LC_ALL="C.UTF-8" LANG="en_US.UTF-8" LANGUAGE="en_US.UTF-8"
 # Use baseimage-docker's init system
 CMD ["/sbin/my_init"]
 
-RUN apt-get update -q
+#########################################
+##         RUN INSTALL SCRIPT          ##
+#########################################
+ADD * /tmp/
+RUN chmod +x /tmp/install.sh && /tmp/install.sh && rm /tmp/install.sh
 
-# Install Dependencies
-RUN apt-get install -qy mariadb-server
-
-# Tweak my.cnf
-RUN sed -i -e 's#\(bind-address.*=\).*#\1 0.0.0.0#g' /etc/mysql/my.cnf
-RUN sed -i -e 's#\(log_error.*=\).*#\1 /db/mysql_safe.log#g' /etc/mysql/my.cnf
-RUN sed -i -e 's/\(user.*=\).*/\1 nobody/g' /etc/mysql/my.cnf
-
-# InnoDB engine to use 1 file per table, vs everything in ibdata.
-RUN echo '[mysqld]' > /etc/mysql/conf.d/innodb_file_per_table.cnf
-RUN echo 'innodb_file_per_table' >> /etc/mysql/conf.d/innodb_file_per_table.cnf
-
-EXPOSE 3306
-
-VOLUME /db
-
-# Add mariadb to runit
-RUN mkdir /etc/service/mariadb
-ADD mariadb.sh /etc/service/mariadb/run
-RUN chmod +x /etc/service/mariadb/run
+#########################################
+##         EXPORTS AND VOLUMES         ##
+#########################################
+VOLUME ["/db"]
+EXPOSE 3306 3307
