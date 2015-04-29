@@ -20,18 +20,24 @@ chown -R nobody:users /home && \
 
 # mv startup file and make executable
 mkdir -p /etc/service/mariadb && \
-mkdir -p /db
+mkdir -p /db && \
 mv /root/mariadb.sh /etc/service/mariadb/run && \
 mv /root/firstrun.sh /etc/my_init.d/firstrun.sh && \
 chmod +x /etc/service/mariadb/run && \
 chmod +x /etc/my_init.d/firstrun.sh && \
     
+# set inotify.sh and make runsql-script executable
+mkdir -p /config && \
+mkdir -p /etc/service/inotify && \
+mv /root/inotify.sh /etc/service/inotify/run && \
+chmod +x /etc/service/inotify/run && \
+chmod +x /root/runsql-script && \
+
 # update apt
 apt-get update -q && \
 
 # Install Dependencies
-apt-get install -qy mariadb-server && \
-apt-get install -qy mysqltuner && \
+apt-get install -qy mariadb-server inotify-tools && \
 
 # Tweak my.cnf
 sed -i -e 's#\(bind-address.*=\).*#\1 0.0.0.0#g' /etc/mysql/my.cnf && \
