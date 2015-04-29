@@ -13,8 +13,7 @@ EXPOSE 3306
 ADD src/ /root/
 
 # Configure user nobody to match unRAID's settings
-RUN \
-usermod -u 99 nobody && \
+RUN usermod -u 99 nobody && \
 usermod -g 100 nobody && \
 usermod -d /home nobody && \
 chown -R nobody:users /home && \
