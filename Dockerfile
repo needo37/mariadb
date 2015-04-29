@@ -1,15 +1,16 @@
 FROM phusion/baseimage:0.9.16
-ENV DEBIAN_FRONTEND noninteractive
 
 # Set correct environment variables
-ENV HOME /root
-ENV TERM xterm
+ENV DEBIAN_FRONTEND=noninteractive HOME="/root" TERM=xterm
+
 # Use baseimage-docker's init system
 CMD ["/sbin/my_init"]
 
-# Add mariadb.sh, firstrun.sh and my.cnf
-ADD mariadb.sh /root/mariadb.sh
-ADD firstrun.sh /etc/my_init.d/firstrun.sh
+# Expose port
+EXPOSE 3306
+
+# Add local files
+ADD src/ /root/
 
 # Configure user nobody to match unRAID's settings
 RUN \
@@ -22,6 +23,7 @@ chown -R nobody:users /home && \
 mkdir -p /etc/service/mariadb && \
 mkdir -p /db
 mv /root/mariadb.sh /etc/service/mariadb/run && \
+mv /root/firstrun.sh /etc/my_init.d/firstrun.sh && \
 chmod +x /etc/service/mariadb/run && \
 chmod +x /etc/my_init.d/firstrun.sh && \
     
@@ -38,6 +40,12 @@ sed -i -e 's#\(log_error.*=\).*#\1 /db/mysql_safe.log#g' /etc/mysql/my.cnf && \
 sed -i -e 's/\(user.*=\).*/\1 nobody/g' /etc/mysql/my.cnf && \
 echo '[mysqld]' > /etc/mysql/conf.d/innodb_file_per_table.cnf && \
 echo 'innodb_file_per_table' >> /etc/mysql/conf.d/innodb_file_per_table.cnf && \
-cp /etc/mysql/my.cnf /root/my.cnf
+cp /etc/mysql/my.cnf /root/my.cnf && \
 
-EXPOSE 3306
+# clean up
+apt-get clean && \
+rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+/usr/share/man /usr/share/groff /usr/share/info \
+/usr/share/lintian /usr/share/linda /var/cache/man && \
+(( find /usr/share/doc -depth -type f ! -name copyright|xargs rm || true )) && \
+(( find /usr/share/doc -empty|xargs rmdir || true ))
